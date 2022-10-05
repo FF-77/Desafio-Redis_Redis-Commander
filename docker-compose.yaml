@@ -1,0 +1,32 @@
+version: '3.1'
+
+volumes:
+  redis_vol:
+
+networks:
+  redis_rede:
+    driver: bridge
+
+services:
+  redis:
+    image: redis
+    networks:
+      - redis_rede
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_vol:/var/lib/redis
+    hostname: redis-db
+
+  redis-comamander:
+    image: rediscommander/redis-commander:latest
+    depends_on:
+      - redis
+    networks:
+      - redis_rede
+    ports:
+      - 8081:8081
+    hostname: redis-commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
